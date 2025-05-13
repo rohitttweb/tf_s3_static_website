@@ -1,11 +1,11 @@
-S3 Bucket Setup for Static Website Hosting Using Terraform
-Objective
+# S3 Bucket Setup for Static Website Hosting Using Terraform
+## Objective
 The objective is to configure an AWS S3 bucket for static website hosting using Terraform, upload website files, and resolve errors encountered during the process.
-Given Code Example: 
+## Given Code Example: 
 resource "aws_s3_bucket" "mybucket0001" {
 bucket = "mybucket0001"
 }
-# Set bucket ownership controls
+//Set bucket ownership controls
 resource "aws_s3_bucket_ownership_controls" "example" {
 bucket = aws_s3_bucket.mybucket0001.id
 
@@ -13,7 +13,7 @@ bucket = aws_s3_bucket.mybucket0001.id
     		object_ownership = "BucketOwnerPreferred"
   	}
 }
-# Allow public access (use with caution in production)
+//Allow public access (use with caution in production)
 resource "aws_s3_bucket_public_access_block" "example" {
  	bucket = aws_s3_bucket.mybucket0001.id
 
@@ -22,7 +22,7 @@ resource "aws_s3_bucket_public_access_block" "example" {
   	ignore_public_acls      = false
   	restrict_public_buckets = false
 }
-# Enable static website hosting
+//Enable static website hosting
 resource "aws_s3_bucket_website_configuration" "example" {
 bucket = aws_s3_bucket.mybucket0001.id
 
@@ -43,7 +43,7 @@ bucket = aws_s3_bucket.mybucket0001.id
     		}
   	}
 }
-# Upload index.html to the S3 bucket
+//Upload index.html to the S3 bucket
 resource "aws_s3_object" "index_html" {
 bucket       = aws_s3_bucket.mybucket0001.id
   	key          = "index.html"
@@ -51,7 +51,7 @@ bucket       = aws_s3_bucket.mybucket0001.id
   	content_type = "text/html"
   	acl          = "public-read"
 }
-# Upload error.html to the S3 bucket
+//Upload error.html to the S3 bucket
 resource "aws_s3_object" "error_html" {
 bucket       = aws_s3_bucket.mybucket0001.id
   	key          = "error.html"
@@ -60,8 +60,8 @@ bucket       = aws_s3_bucket.mybucket0001.id
   	acl          = "public-read"
 }
 
-Error Encountered:
-1. When Running terraform apply Again:
+## Error Encountered:
+### 1. When Running terraform apply Again:
 After modifying the HTML file, Terraform says "no changes required."
 Cause:
 The source argument didn't properly detect changes in the file content during terraform apply, especially when the HTML files were updated.
@@ -103,7 +103,7 @@ resource "aws_s3_object" "error_html" {
 
 This change allows Terraform to recognize content changes and upload updated files.
 
-2. Automating the Upload of Multiple Files to S3
+### 2. Automating the Upload of Multiple Files to S3
 
 Initially, We manually created individual aws_s3_object resources for every file (HTML, CSS, JavaScript). As the website grew, it became tedious to create and manage a separate resource for each new file. This was a major pain point.
 
@@ -135,7 +135,7 @@ Why This Approach Worked:
 
 Before aws_s3_object I try to use aws_s3_bucket_object resource object  after looking some references on internet but aws_s3_bucket_object is decrypted in newer version of terraform  so I sticked with aws_s3_object
 
-3. Access Denied Errors
+### 3. Access Denied Errors
 While everything was running smoothly, I encountered an Access Denied error when trying to access my HTML files.
 Cause: Block Public ACLs
 The issue stemmed from the Block Public ACLs setting being enabled in S3. This prevented the acl = "public-read" setting from working.
@@ -164,7 +164,7 @@ Conclusion:
 This setup demonstrates how to automate the process of uploading a static website to AWS S3 using Terraform, handle file updates, and configure public access securely. By using dynamic provisioning and understanding the nuances of AWS S3's permissions system, you can efficiently manage large numbers of files and avoid manual configuration updates.
 
 
-Final Code and Steps :
+## Final Code and Steps :
 Step 1: Create an S3 Bucket
 We started by creating an S3 bucket using the aws_s3_bucket resource.
 resource "aws_s3_bucket" "mybucket0001" {
@@ -252,10 +252,11 @@ value = aws_s3_bucket_website_configuration.example.website_endpoint
 }
 
 
-Folder Structure
+## Folder Structure
  
 
-Commands Outputs:
+## Commands Outputs:
+
 Terraform init
  
 Terraform Plan
